@@ -32,10 +32,11 @@
         var intervalledTimer = null;
         function startPomodoro() {
             countDownDate = new Date();
-            countDownDate.setMinutes( countDownDate.getMinutes() + 1 );
+            countDownDate.setMinutes( countDownDate.getMinutes() + 25 );
             updateTickers();
             intervalledTimer = setInterval(function() {updateTickers();}, 1000);
         }
+
         function updateTickers() {
             var now = new Date().getTime();
             var distance = countDownDate - now;
