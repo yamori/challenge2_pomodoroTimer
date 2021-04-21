@@ -13,11 +13,23 @@
         <h1>Serverless, NodeJS, HTML</h1>
         <a class="waves-effect waves-light btn" onclick="startPomodoro();"><i class="material-icons left">build</i><i class="material-icons right">access_time</i>start pomodoro</a>
         <h2>timer</h2>
+        <span id="mode"></span>
         <span id="mins"></span>
         <span id="secs"></span>
     </div>
     <script>
         var dev_in_seconds = true;
+        const POMODORO_CYCLE = [
+            {mode: 'focus', duration: 25},
+            {mode: 'break', duration: 5},
+            {mode: 'focus', duration: 25},
+            {mode: 'break', duration: 5},
+            {mode: 'focus', duration: 25},
+            {mode: 'break', duration: 5},
+            {mode: 'focus', duration: 25},
+            {mode: 'break', duration: 15}
+        ];
+
         // for parsing cookie string
         const parseCookie = str =>
             str
@@ -29,15 +41,21 @@
             }, {});
             
 
+        var pomodoro_cycle_position = 0;
         var countDownDate = null;
         var intervalledTimer = null;
         function startPomodoro() {
+            var duration_int = POMODORO_CYCLE[pomodoro_cycle_position].duration;
+            var mode = POMODORO_CYCLE[pomodoro_cycle_position].mode;
+            pomodoro_cycle_position++;
+
             countDownDate = new Date();
             if (dev_in_seconds) {
-                countDownDate.setSeconds( countDownDate.getSeconds() + 25 );
+                countDownDate.setSeconds( countDownDate.getSeconds() + duration_int );
             } else  {
-                countDownDate.setMinutes( countDownDate.getMinutes() + 25 );
+                countDownDate.setMinutes( countDownDate.getMinutes() + duration_int );
             }
+            $("#mode").text(mode);
             updateTickers();
             intervalledTimer = setInterval(function() {updateTickers();}, 1000);
         }
@@ -46,10 +64,18 @@
             var now = new Date().getTime();
             var distance = countDownDate - now;
             if (distance < 0) {
-                clearInterval(intervalledTimer);
-                $("#mins").text("-");
-                $("#secs").text("-");
-                return;
+                var duration_int = POMODORO_CYCLE[pomodoro_cycle_position].duration;
+                var mode = POMODORO_CYCLE[pomodoro_cycle_position].mode;
+                pomodoro_cycle_position++;
+
+                countDownDate = new Date();
+                if (dev_in_seconds) {
+                    countDownDate.setSeconds( countDownDate.getSeconds() + duration_int );
+                } else  {
+                    countDownDate.setMinutes( countDownDate.getMinutes() + duration_int );
+                }
+                $("#mode").text(mode);
+                distance = countDownDate - now;
             }
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
