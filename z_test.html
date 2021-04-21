@@ -17,6 +17,7 @@
         <span id="secs"></span>
     </div>
     <script>
+        var dev_in_seconds = true;
         // for parsing cookie string
         const parseCookie = str =>
             str
@@ -32,7 +33,11 @@
         var intervalledTimer = null;
         function startPomodoro() {
             countDownDate = new Date();
-            countDownDate.setMinutes( countDownDate.getMinutes() + 25 );
+            if (dev_in_seconds) {
+                countDownDate.setSeconds( countDownDate.getSeconds() + 25 );
+            } else  {
+                countDownDate.setMinutes( countDownDate.getMinutes() + 25 );
+            }
             updateTickers();
             intervalledTimer = setInterval(function() {updateTickers();}, 1000);
         }
@@ -48,7 +53,6 @@
             }
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            console.log(seconds);
             $("#mins").text(minutes + "m");
             $("#secs").text(seconds + "s");
         }
