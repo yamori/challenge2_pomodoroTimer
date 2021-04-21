@@ -6,10 +6,25 @@
   <body>
     <h1>Serverless, NodeJS, HTML</h1>
     <script>
+        const parseCookie = str =>
+            str
+                .split(';')
+                .map(v => v.split('='))
+                .reduce((acc, v) => {
+                acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+                return acc;
+                }, {});
+            
+
+        console.log(parseCookie('foo=bar; equation=E%3Dmc%5E2'));
         var now = new Date();
         now.setDate( now.getDate() + 19 );
         console.log(now.toUTCString());
-        document.cookie = "username=John Doe;expires=" + now.toUTCString() + ";"; 
+        document.cookie = "parse_date=" + now.toUTCString() + ";expires=" + now.toUTCString() + ";"; 
+        console.log(parseCookie(document.cookie));
+        var cookieObj = parseCookie(document.cookie);
+        var date = new Date(Date.parse(cookieObj.parse_date));
+        console.log(date);
     </script>
   </body>
 </html>
