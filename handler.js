@@ -15,16 +15,42 @@ module.exports.hello = async (event) => {
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        .centering {
+            text-align: center;
+        }
+    </style>
   </head>
   <body>
     <div class="container">
-        <h1>Serverless, NodeJS, HTML</h1>
-        <a class="waves-effect waves-light btn" onclick="startPomodoro();"><i class="material-icons left">build</i><i class="material-icons right">access_time</i>start pomodoro</a>
-        <h2>timer</h2>
-        <span id="mins"></span>
-        <span id="secs"></span>
+        <div class="row">
+            <div class="col s12">
+                <h2 class="centering">Pomodoro Timer</h2>
+                <p class="centering"><a class="waves-effect waves-light btn-large" onclick="startPomodoro();"><i class="material-icons left">build</i><i class="material-icons right">access_time</i>start pomodoro</a></p>
+                <p class="centering">
+                    <label>
+                        <input id="seconds_checkbox" type="checkbox" />
+                        <span>seconds (instead of mins, for debug/test)</span>
+                    </label>
+                </p>
+                <h4 id="mode" class="centering"></h4>
+                <p class="centering"><span id="mins"></span> <span id="secs"></span></p>
+            </div>
+        </div>
     </div>
     <script>
+        var dev_in_seconds = false;
+        const POMODORO_CYCLE = [
+            {mode: 'focus', duration: 25},
+            {mode: 'break', duration: 5},
+            {mode: 'focus', duration: 25},
+            {mode: 'break', duration: 5},
+            {mode: 'focus', duration: 25},
+            {mode: 'break', duration: 5},
+            {mode: 'focus', duration: 25},
+            {mode: 'break', duration: 15}
+        ];
+
         // for parsing cookie string
         const parseCookie = str =>
             str
@@ -36,11 +62,24 @@ module.exports.hello = async (event) => {
             }, {});
             
 
+        var pomodoro_cycle_position = 0;
         var countDownDate = null;
         var intervalledTimer = null;
         function startPomodoro() {
+            if ($("#seconds_checkbox").prop('checked')) {
+                dev_in_seconds = true;
+            }
+            var duration_int = POMODORO_CYCLE[pomodoro_cycle_position].duration;
+            var mode = POMODORO_CYCLE[pomodoro_cycle_position].mode;
+            pomodoro_cycle_position++;
+
             countDownDate = new Date();
-            countDownDate.setMinutes( countDownDate.getMinutes() + 25 );
+            if (dev_in_seconds) {
+                countDownDate.setSeconds( countDownDate.getSeconds() + duration_int );
+            } else  {
+                countDownDate.setMinutes( countDownDate.getMinutes() + duration_int );
+            }
+            $("#mode").text(mode);
             updateTickers();
             intervalledTimer = setInterval(function() {updateTickers();}, 1000);
         }
@@ -49,10 +88,18 @@ module.exports.hello = async (event) => {
             var now = new Date().getTime();
             var distance = countDownDate - now;
             if (distance < 0) {
-                clearInterval(intervalledTimer);
-                $("#mins").text("-");
-                $("#secs").text("-");
-                return;
+                var duration_int = POMODORO_CYCLE[pomodoro_cycle_position].duration;
+                var mode = POMODORO_CYCLE[pomodoro_cycle_position].mode;
+                pomodoro_cycle_position++;
+
+                countDownDate = new Date();
+                if (dev_in_seconds) {
+                    countDownDate.setSeconds( countDownDate.getSeconds() + duration_int );
+                } else  {
+                    countDownDate.setMinutes( countDownDate.getMinutes() + duration_int );
+                }
+                $("#mode").text(mode);
+                distance = countDownDate - now;
             }
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
