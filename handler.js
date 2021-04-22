@@ -51,17 +51,6 @@ module.exports.hello = async (event) => {
             {mode: 'break', duration: 15}
         ];
 
-        // for parsing cookie string
-        const parseCookie = str =>
-            str
-            .split(';')
-            .map(v => v.split('='))
-            .reduce((acc, v) => {
-            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-            return acc;
-            }, {});
-            
-
         var pomodoro_cycle_position = 0;
         var countDownDate = null;
         var intervalledTimer = null;
@@ -71,7 +60,7 @@ module.exports.hello = async (event) => {
             }
             var duration_int = POMODORO_CYCLE[pomodoro_cycle_position].duration;
             var mode = POMODORO_CYCLE[pomodoro_cycle_position].mode;
-            pomodoro_cycle_position++;
+            pomodoro_cycle_position = (pomodoro_cycle_position+1) % POMODORO_CYCLE.length;
 
             countDownDate = new Date();
             if (dev_in_seconds) {
@@ -90,7 +79,7 @@ module.exports.hello = async (event) => {
             if (distance < 0) {
                 var duration_int = POMODORO_CYCLE[pomodoro_cycle_position].duration;
                 var mode = POMODORO_CYCLE[pomodoro_cycle_position].mode;
-                pomodoro_cycle_position++;
+                pomodoro_cycle_position = (pomodoro_cycle_position+1) % POMODORO_CYCLE.length;
 
                 countDownDate = new Date();
                 if (dev_in_seconds) {
@@ -108,6 +97,15 @@ module.exports.hello = async (event) => {
         }
             
 
+        // for parsing cookie string
+        const parseCookie = str =>
+            str
+            .split(';')
+            .map(v => v.split('='))
+            .reduce((acc, v) => {
+            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+            return acc;
+            }, {});
         // Code for setting demo cookies
         // console.log(parseCookie('foo=bar; equation=E%3Dmc%5E2'));
         // var now = new Date();
