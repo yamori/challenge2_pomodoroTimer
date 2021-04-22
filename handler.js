@@ -25,7 +25,7 @@ module.exports.hello = async (event) => {
     <div class="container">
         <div class="row">
             <div class="col s12">
-                <h2 class="centering">Pomodoro Timer</h2>
+                <h3 class="centering">Pomodoro Timer</h3>
                 <p class="centering"><a class="waves-effect waves-light btn-large" onclick="startPomodoro();"><i class="material-icons left">build</i><i class="material-icons right">access_time</i>start pomodoro</a></p>
                 <p class="centering">
                     <label>
@@ -33,12 +33,24 @@ module.exports.hello = async (event) => {
                         <span>seconds (instead of mins, for debug/test)</span>
                     </label>
                 </p>
-                <h4 id="mode" class="centering"></h4>
+                <h2 id="mode" class="centering"></h2>
                 <p class="centering"><span id="mins"></span> <span id="secs"></span></p>
             </div>
         </div>
     </div>
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h1 id="modal_subject" class="centering"></h1>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat" onclick="startPomodoro();">let's go</a>
+        </div>
+    </div>
     <script>
+        $(document).ready(function(){
+            $('.modal').modal();
+        });
+
         var dev_in_seconds = false;
         const POMODORO_CYCLE = [
             {mode: 'focus', duration: 25},
@@ -77,18 +89,11 @@ module.exports.hello = async (event) => {
             var now = new Date().getTime();
             var distance = countDownDate - now;
             if (distance < 0) {
-                var duration_int = POMODORO_CYCLE[pomodoro_cycle_position].duration;
                 var mode = POMODORO_CYCLE[pomodoro_cycle_position].mode;
-                pomodoro_cycle_position = (pomodoro_cycle_position+1) % POMODORO_CYCLE.length;
-
-                countDownDate = new Date();
-                if (dev_in_seconds) {
-                    countDownDate.setSeconds( countDownDate.getSeconds() + duration_int );
-                } else  {
-                    countDownDate.setMinutes( countDownDate.getMinutes() + duration_int );
-                }
-                $("#mode").text(mode);
-                distance = countDownDate - now;
+                $("#modal_subject").text("time for " + mode);
+                $('.modal').modal('open');
+                clearInterval(intervalledTimer);
+                return;
             }
             var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             var seconds = Math.floor((distance % (1000 * 60)) / 1000);
