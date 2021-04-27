@@ -26,15 +26,16 @@ module.exports.hello = async (event) => {
         <div class="row">
             <div class="col s12">
                 <h3 class="centering">Pomodoro Timer</h3>
-                <p class="centering"><a class="waves-effect waves-light btn-large" onclick="startPomodoro();"><i class="material-icons left">build</i><i class="material-icons right">access_time</i>start pomodoro</a></p>
+                <p class="centering"><a class="waves-effect waves-light btn" onclick="startPomodoro();"><i class="material-icons left">build</i><i class="material-icons right">access_time</i>start pomodoro</a></p>
                 <p class="centering">
                     <label>
                         <input id="seconds_checkbox" type="checkbox" />
                         <span>seconds (instead of mins, for debug/test)</span>
                     </label>
                 </p>
-                <h2 id="mode" class="centering"></h2>
+                <h1 id="mode" class="centering"></h1>
                 <p class="centering"><span id="mins"></span> <span id="secs"></span></p>
+                <p id="pause_btn" class="centering"><a class="waves-effect waves-light btn" onclick="pausePomodoro();"><i class="material-icons">pause</i></a></p>
             </div>
         </div>
     </div>
@@ -48,6 +49,7 @@ module.exports.hello = async (event) => {
     </div>
     <script>
         $(document).ready(function(){
+            $("#pause_btn").hide();
             $('.modal').modal();
         });
 
@@ -67,6 +69,9 @@ module.exports.hello = async (event) => {
         var countDownDate = null;
         var intervalledTimer = null;
         function startPomodoro() {
+            clearInterval(intervalledTimer);
+            paused = false; $("#pause_btn a i").html("pause");
+            $("#pause_btn").show();
             if ($("#seconds_checkbox").prop('checked')) {
                 dev_in_seconds = true;
             }
@@ -85,6 +90,8 @@ module.exports.hello = async (event) => {
             intervalledTimer = setInterval(function() {updateTickers();}, 1000);
         }
 
+        var mins_countdown = 0;
+        var secs_countdown = 0;
         function updateTickers() {
             var now = new Date().getTime();
             var distance = countDownDate - now;
@@ -95,10 +102,27 @@ module.exports.hello = async (event) => {
                 clearInterval(intervalledTimer);
                 return;
             }
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            $("#mins").text(minutes + "m");
-            $("#secs").text(seconds + "s");
+            mins_countdown = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            secs_countdown = Math.floor((distance % (1000 * 60)) / 1000);
+            $("#mins").text(mins_countdown + "m");
+            $("#secs").text(secs_countdown + "s");
+        }
+
+        var paused = false;
+        function pausePomodoro() {
+            if (paused) {
+                countDownDate = new Date();
+                countDownDate.setSeconds( countDownDate.getSeconds() + secs_countdown );
+                countDownDate.setMinutes( countDownDate.getMinutes() + mins_countdown );
+                updateTickers();
+                intervalledTimer = setInterval(function() {updateTickers();}, 1000);
+                $("#pause_btn a i").html("pause");
+                paused = false;
+            } else {
+                clearInterval(intervalledTimer);
+                $("#pause_btn a i").html("play_arrow");
+                paused = true;
+            }
         }
             
 
