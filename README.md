@@ -2,6 +2,18 @@
 
 NodeJS + Express + Materialize(CSS) app for the appDev challenge.  Deployed [here](https://np9a3yuood.execute-api.us-east-1.amazonaws.com) (still under construction).
 
+## Commands
+
+Serverless:
+
+```
+sls deploy # (will print the urls/endpoints)
+
+sls remove
+```
+
+Otherwise the file `z_test.html` is a convenient local html file for testing, before it's contents are appropriately placed in `handler.js`.
+
 ## Thigns I Learned
 
 - Set/Get cookies via JScript on the client, httpOnly=false ensures that `Document.cookie` API can access the cookie.  (Otherwise it's only allowed to be sent back to the server.)
