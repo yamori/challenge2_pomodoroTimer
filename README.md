@@ -16,6 +16,8 @@ Otherwise the file `z_test.html` is a convenient local html file for testing, be
 
 ## Thigns I Learned
 
+- [Materialize CSS](https://materializecss.com/)
+- (didn't end up using cookies, but did an initial spike into using them)
 - Set/Get cookies via JScript on the client, httpOnly=false ensures that `Document.cookie` API can access the cookie.  (Otherwise it's only allowed to be sent back to the server.)
 - parsing cookie strings, and the `expires` tag
 
