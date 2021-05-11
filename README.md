@@ -1,6 +1,8 @@
 # CodeChallenge2 - Pomodoro Timer
 
-NodeJS + Express + Materialize(CSS) app for the appDev challenge.  Deployed [here](https://np9a3yuood.execute-api.us-east-1.amazonaws.com) (still under construction).
+NodeJS + Express + Materialize(CSS) app for the appDev challenge.
+
+(Not currently deployed.)
 
 ## Commands
 
